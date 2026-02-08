@@ -1,29 +1,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { useActiveSection } from "@/hooks/useActiveSection";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("hero");
+  const activeSection = useActiveSection();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
-      
-      // Detectar seção ativa
-      const sections = ["hero", "about", "projects", "contact"];
-      const current = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      if (current) setActiveSection(current);
     };
-    
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -44,71 +33,70 @@ export function Navbar() {
   };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-[#1a1a1a]/90 backdrop-blur-sm shadow-lg" : "bg-transparent"
-      }`}
-    >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center h-16">
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <Button
-                key={item.id}
-                variant="ghost"
-                className={`transition-colors ${
-                  activeSection === item.id
-                    ? "text-orange-500"
-                    : "text-gray-400 hover:text-white"
+    <nav className="fixed top-4 left-0 right-0 z-50 transition-all duration-300 flex flex-col items-center px-4 pointer-events-none">
+      <div
+        className={`max-w-fit mx-auto px-6 h-14 flex items-center gap-8 transition-all duration-300 pointer-events-auto ${isScrolled
+          ? "bg-background/80 backdrop-blur-xl shadow-2xl border border-white/10 rounded-full"
+          : "bg-background/40 backdrop-blur-md border border-white/5 rounded-full"
+          }`}
+      >
+        <div className="hidden md:flex items-center space-x-1">
+          {navItems.map((item) => (
+            <Button
+              key={item.id}
+              variant="ghost"
+              className={`transition-all duration-300 hover:scale-105 rounded-full px-4 h-9 ${activeSection === item.id
+                ? "text-cyan-400 font-bold bg-cyan-500/10"
+                : "text-muted-foreground hover:text-foreground"
                 }`}
-                onClick={() => {
-                  handleScrollToSection(item.id);
-                  setActiveSection(item.id);
-                }}
-              >
-                {item.label}
-              </Button>
-            ))}
-          </div>
+              onClick={() => handleScrollToSection(item.id)}
+            >
+              {item.label}
+            </Button>
+          ))}
+        </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2 absolute right-4">
+        <div className="flex items-center gap-4 md:border-l md:border-white/10 md:pl-8">
+          <Button
+            className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full px-6 h-9 font-medium transition-all hover:scale-105 active:scale-95 shadow-lg shadow-cyan-500/20 border-none"
+            onClick={() => handleScrollToSection('contact')}
+          >
+            Entre em contato
+          </Button>
+
+          <div className="md:hidden">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-foreground"
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden bg-[#1a1a1a]/95 backdrop-blur-sm mt-2 rounded-lg overflow-hidden animate-scale-in border border-gray-800">
-            <div className="flex flex-col space-y-1 p-4">
-              {navItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  className={`justify-start transition-colors ${
-                    activeSection === item.id
-                      ? "text-orange-500"
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                  onClick={() => {
-                    handleScrollToSection(item.id);
-                    setActiveSection(item.id);
-                  }}
-                >
-                  {item.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
+
+      {isMobileMenuOpen && (
+        <div className="md:hidden mt-2 pointer-events-auto min-w-[200px]">
+          <div className="bg-background/95 backdrop-blur-md rounded-2xl overflow-hidden animate-in slide-in-from-top-4 border border-border shadow-2xl flex flex-col p-2">
+            {navItems.map((item) => (
+              <Button
+                key={item.id}
+                variant="ghost"
+                className={`justify-start transition-colors rounded-xl ${activeSection === item.id
+                  ? "text-cyan-400 bg-cyan-500/10 font-bold"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
+                onClick={() => handleScrollToSection(item.id)}
+              >
+                {item.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
+

@@ -1,134 +1,117 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { Send, Phone, Mail, Clock, Github, Linkedin } from "lucide-react";
 
 export function Contact() {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.2 }
-    );
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // Simulation
+    setTimeout(() => {
+      setIsSubmitting(false);
+      toast.success("Mensagem enviada com sucesso! 🚀");
+    }, 1000);
+  };
 
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const contactInfo = [
+    { icon: Mail, title: "Email", value: "arisiosaf@gmail.com" },
+    { icon: Phone, title: "Telefone", value: "+55 88 9 9987-6936" },
+    { icon: Clock, title: "Disponibilidade", value: "Segunda a Sexta, 8h às 18h" },
+  ];
+
+  const socialLinks = [
+    { icon: Linkedin, href: "https://www.linkedin.com/in/arisioandrade/" },
+    { icon: Github, href: "https://github.com/arisioandrade" },
+  ];
 
   return (
-    <section
-      ref={sectionRef}
-      id="contact"
-      className="py-24 md:py-32 relative overflow-hidden bg-[#1a1a1a]"
-    >
-      <div className="container px-4 relative z-10">
-        <div
-          className={`max-w-4xl mx-auto transition-all duration-700 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
+    <section id="contact" className="py-24 md:py-32 bg-off-white-premium relative overflow-hidden">
+      <div className="container px-4 relative z-10 text-slate-900">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="max-w-4xl mx-auto text-center mb-16"
         >
-          {/* Cabeçalho */}
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white">
-              Entre em contato
-            </h2>
-          </div>
+          <span className="text-xs md:text-sm text-cyan-500 font-bold tracking-[0.3em] uppercase block mb-4">
+            Contato
+          </span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight mb-6">
+            Vamos conversar sobre seu <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Próximo Projeto</span>?
+          </h2>
+          <p className="text-slate-600 text-lg">
+            Estou sempre aberto a novos desafios e oportunidades de colaboração.
+          </p>
+        </motion.div>
 
-          {/* Formulário */}
-          <form
-            action="https://formsubmit.co/arisiosaf@gmail.com"
-            method="POST"
-            className="p-8 md:p-10 space-y-6"
-            onSubmit={() => toast.success("Mensagem enviada com sucesso! 🚀")}
+        <div className="max-w-3xl mx-auto">
+          {/* Formulário Centralizado */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
           >
-            {/* Configurações do FormSubmit */}
-            <input type="hidden" name="_captcha" value="false" />
-            <input
-              type="hidden"
-              name="_next"
-              value="https://arisioandrade.vercel.app/"
-            />
-            <input
-              type="hidden"
-              name="_subject"
-              value="Nova mensagem do site!"
-            />
-            <input type="hidden" name="_template" value="table" />
-            <input type="text" name="_honey" style={{ display: "none" }} />
-
-            {/* Grid de campos */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Coluna Esquerda */}
-              <div className="space-y-6">
-                <Input
-                  id="name"
-                  name="name"
-                  placeholder="Nome"
-                  required
-                  className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-500 rounded-md"
-                />
-
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="Telefone"
-                  required
-                  className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-500 rounded-md"
-                />
-
-                <Input
-                  id="timeline"
-                  name="timeline"
-                  placeholder="Prazo"
-                  className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-500 rounded-md"
-                />
-              </div>
-
-              {/* Coluna Direita */}
-              <div className="space-y-6 flex flex-col">
-                <Input
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  required
-                  className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-500 rounded-md"
-                />
-
-                <Input
-                  id="service"
-                  name="service"
-                  placeholder="Serviço de Interesse"
-                  className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-500 rounded-md"
-                />
-
-                <Textarea
-                  id="message"
-                  name="message"
-                  placeholder="Detalhes do Projeto..."
-                  rows={6}
-                  required
-                  className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-orange-500 focus:ring-orange-500 rounded-md resize-none min-h-[140px]"
-                />
-              </div>
-            </div>
-
-            {/* Botão Enviar */}
-            <div className="flex justify-end mt-6">
-              <Button
-                type="submit"
-                className="bg-transparent border border-gray-600 text-white hover:bg-gray-800 hover:border-orange-500 hover:text-orange-500 px-8 py-6 rounded-md transition-colors"
-              >
-                Enviar
-              </Button>
-            </div>
-          </form>
+            <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-xl shadow-slate-200/50 p-8 md:p-12 rounded-3xl">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700 ml-1">Nome</label>
+                    <Input
+                      name="name"
+                      placeholder="Como posso te chamar?"
+                      required
+                      className="bg-slate-50 border-slate-200 focus:border-cyan-500 h-12 rounded-xl text-slate-900"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700 ml-1">Email</label>
+                    <Input
+                      name="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      required
+                      className="bg-slate-50 border-slate-200 focus:border-cyan-500 h-12 rounded-xl text-slate-900"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-700 ml-1">Assunto</label>
+                  <Input
+                    name="subject"
+                    placeholder="No que posso te ajudar?"
+                    required
+                    className="bg-slate-50 border-slate-200 focus:border-cyan-500 h-12 rounded-xl text-slate-900"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-700 ml-1">Mensagem</label>
+                  <Textarea
+                    name="message"
+                    placeholder="Conte-me um pouco mais..."
+                    required
+                    className="bg-slate-50 border-slate-200 focus:border-cyan-500 min-h-[150px] rounded-xl text-slate-900"
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full h-14 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-white font-bold transition-all duration-300 shadow-lg shadow-cyan-500/25 gap-2"
+                >
+                  {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
+                  <Send className="w-4 h-4" />
+                </Button>
+              </form>
+            </Card>
+          </motion.div>
         </div>
       </div>
     </section>
